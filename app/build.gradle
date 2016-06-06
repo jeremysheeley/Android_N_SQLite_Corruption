@@ -1,0 +1,109 @@
+apply plugin: 'com.android.model.application'
+
+model {
+    repositories {
+        libs(PrebuiltLibraries) {
+            // Configure one pre-built lib: shared
+            sqlite {
+                // Inform Android Studio where header file dir for this lib
+                headers.srcDir "../sqlite-3.7.4/include"
+                // Inform Android Studio where lib is -- each ABI should have a lib file
+                binaries.withType(SharedLibraryBinary) {
+                    sharedLibraryFile = file("../sqlite-3.7.4/lib/${targetPlatform.getName()}/libsqlite.so")
+                }
+            }
+        }
+    }
+    android {
+        compileSdkVersion = 23
+        buildToolsVersion = '23.0.2'
+
+        defaultConfig {
+            applicationId = 'com.example.sqlitecorruption'
+            minSdkVersion.apiLevel = 21
+            targetSdkVersion.apiLevel = 23
+        }
+        /*
+         * native build settings: taking default for almost everything
+         */
+        ndk {
+            moduleName = 'hello-jni'
+            toolchain = 'clang'
+            CFlags.addAll(['-Wall'])
+            ldLibs.addAll(['log'])
+        }
+        sources {
+            main {
+                jni {
+                    dependencies {
+                        library 'sqlite' linkage 'shared'
+                    }
+                }
+                jniLibs {
+                    // for shared lib, lib need to be pushed to the target too
+                    // Once libs are copied into app/src/main/jniLibs directory,
+                    // Android Studio will pack them into APK's lib/ directory
+                    // Here we like to avoid another duplication by pointing
+                    // to the files that containing our libs' distribution location
+                    // so the same file is used by compiler at host, also packed
+                    // into APk to be used at Target (phone/tablet)
+                    source {
+                        //Uncomment this line if you actually want to include the libsqlite.so file in your apk.
+                        //For Android N Preview, it doesn't matter, as the corruption happens
+                        //regardless.
+                        //srcDir "../sqlite-3.7.4/lib"
+                    }
+                }
+            }
+        }
+        buildTypes {
+            release {
+                minifyEnabled = false
+                proguardFiles.add(file('proguard-rules.txt'))
+            }
+        }
+        productFlavors {
+            // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+            // https://developer.android.com/ndk/guides/abis.html#sa
+            /*create("arm") {
+                ndk.abiFilters.add("armeabi")
+            }
+            create("arm7") {
+                ndk.abiFilters.add("armeabi-v7a")
+            }
+            create("arm8") {
+                ndk.abiFilters.add("arm64-v8a")
+            }*/
+            create("x86") {
+                ndk.abiFilters.add("x86")
+            }
+            /*create("x86-64") {
+                ndk.abiFilters.add("x86_64")
+            }
+            create("mips") {
+                ndk.abiFilters.add("mips")
+            }
+            create("mips-64") {
+                ndk.abiFilters.add("mips64")
+            }*/
+            // To include all cpu architectures, leaves abiFilters empty
+            //create("all")
+        }
+    }
+}
+
+task(deleteSQLiteLib) <<  {
+    //doFirst {
+        println 'deleting sqlite lib'
+       // delete file("jniLibs/x86/libsqlite.so")
+    //}
+}
+//  Unnecessary dependency management:
+//  Make sure the libs are available when begin compiling application project
+//  This could be ignored because in real scenario, the pre-built libs are
+//  already given to us before creating application.
+tasks.whenTaskAdded { task ->
+    if (task.name.contains('Jar')) {
+        task.dependsOn 'deleteSQLiteLib'
+    }
+}

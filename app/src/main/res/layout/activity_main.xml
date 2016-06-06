@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Progress1"
+        android:text="Tests haven't started"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Progress2"
+        android:text="Tests haven't started"/>
+    <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <RadioButton android:id="@+id/radio_java"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Two Java Threads"/>
+    <RadioButton android:id="@+id/radio_java_native"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="One Java Thread, One Native Thread"/>
+    <RadioButton android:id="@+id/radio_native"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Two Native Threads"/>
+    </RadioGroup>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/startTest"
+        android:text="Start Test"/>
+</LinearLayout>
