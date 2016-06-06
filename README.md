@@ -15,7 +15,9 @@ The SQLite "How to corrupt A SQLite Database File" at https://www.sqlite.org/how
 
 In Android versions previous to Android N, a native library could rely on the system libsqlite.so. This WAS NOT OFFICIALLY SUPPORTED, and sqlite was not one of the stable apis. https://developer.android.com/ndk/guides/stable_apis.html. Regardless, the solution worked, and only one copy of the sqlite library was loaded. Locking the database was respected in both Java and native code.
 
-How things work in Android N: Any attempt to load the system sqlite library will cause an alert dialog warning the user of unsupported behavior. Although it does load a copy of the sqlite library, it is not the same one in use from android.database.sqlite, as locking is not respected.
+## How things work in Android N: 
+
+Any attempt to load the system sqlite library will cause an alert dialog warning the user of unsupported behavior. Although it does load a copy of the sqlite library, it is not the same one in use from android.database.sqlite, as locking is not respected.
 
 ## How to use the test project: 
 
